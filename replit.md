@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Node.js Express API server that provides AI-powered functionality through OpenAI integration. The application serves as a backend service with CORS support, rate limiting, and request logging capabilities. It's designed to be a simple, lightweight API server that can handle AI-related requests.
+This is a full-stack code generation application that uses OpenAI's GPT-4o model to generate code from natural language descriptions. The application consists of a Node.js Express backend API server and a clean, modern frontend interface. Users can input natural language prompts and receive complete, functional code with explanations and setup instructions.
 
 ## User Preferences
 
@@ -23,22 +23,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Key Components
 
-### 1. Express Server (server.js)
-- Main application entry point
-- Configures middleware stack
-- Handles HTTP request/response lifecycle
-- Implements custom rate limiting logic
-
-### 2. OpenAI Integration
-- **Client**: OpenAI SDK v5.9.0 for AI functionality
-- **Authentication**: API key-based authentication via environment variables
-- **Purpose**: Provides AI-powered features through OpenAI's API
-
-### 3. Middleware Components
-- **CORS**: Cross-origin resource sharing for frontend communication
-- **Body Parser**: JSON parsing with 10MB limit for file uploads
+### 1. Backend Server (server.js)
+- **Express Server**: Main application entry point with middleware stack
+- **API Endpoint**: `/api/compile` - Accepts natural language prompts and returns generated code
+- **OpenAI Integration**: Uses GPT-4o model for code generation with structured JSON responses
+- **Static File Serving**: Serves frontend files from `public/` directory
 - **Rate Limiting**: Custom in-memory implementation (60 requests/minute per IP)
-- **Request Logging**: Timestamped request logging for debugging
+- **Error Handling**: Comprehensive error responses for API failures
+
+### 2. Frontend Interface (public/)
+- **index.html**: Clean, responsive web interface for code generation
+- **script.js**: JavaScript client that handles API communication and UI interactions
+- **style.css**: Modern CSS styling with gradient design and responsive layout
+- **Features**: Real-time code generation, syntax highlighting, copy functionality, error handling
+
+### 3. OpenAI Integration
+- **Model**: GPT-4o (latest model) for high-quality code generation
+- **Response Format**: Structured JSON with code, explanation, dependencies, and instructions
+- **Temperature**: 0.7 for balanced creativity and accuracy
+- **Authentication**: API key-based authentication via environment variables
 
 ## Data Flow
 
