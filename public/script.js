@@ -15,6 +15,9 @@ const explanationText = document.getElementById('explanationText');
 const dependenciesList = document.getElementById('dependenciesList');
 const instructionsText = document.getElementById('instructionsText');
 const copyBtn = document.getElementById('copyBtn');
+const previewBtn = document.getElementById('previewBtn');
+const previewContainer = document.getElementById('previewContainer');
+const livePreview = document.getElementById('livePreview');
 
 // State
 let isGenerating = false;
@@ -23,12 +26,12 @@ let lastGeneratedCode = '';
 // Event Listeners
 generateBtn.addEventListener('click', generateCode);
 copyBtn.addEventListener('click', copyCode);
+previewBtn.addEventListener('click', showPreview);
 promptInput.addEventListener('keydown', handleKeyDown);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     promptInput.focus();
-    // Add tooltip for keyboard shortcut
     promptInput.title = 'Ctrl+Enter (or Cmd+Enter) to generate code';
 });
 
@@ -49,28 +52,22 @@ async function generateCode() {
         return;
     }
 
-    if (isGenerating) {
-        return;
-    }
+    if (isGenerating) return;
 
     try {
         setGenerating(true);
         hideError();
         hideResult();
+        hidePreview();
 
         const startTime = Date.now();
 
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 prompt: prompt,
-                options: {
-                    temperature: 0.7,
-                    maxTokens: 4000
-                }
+                options: { temperature: 0.7, maxTokens: 4000 }
             })
         });
 
@@ -137,7 +134,6 @@ async function copyCode() {
 
     try {
         await navigator.clipboard.writeText(lastGeneratedCode);
-
         const originalText = copyBtn.textContent;
         copyBtn.textContent = 'Copied!';
         copyBtn.classList.add('copied');
@@ -159,6 +155,38 @@ async function copyCode() {
     }
 }
 
+// Show live preview
+function showPreview() {
+    if (!lastGeneratedCode) {
+        showError('No code available to preview');
+        return;
+    }
+
+    const html = `
+        <html>
+        <head><style>body { margin: 1rem; font-family: sans-serif; }</style></head>
+        <body>
+        ${lastGeneratedCode}
+        <script>${extractJS(lastGeneratedCode)}</script>
+        </body>
+        </html>
+    `;
+
+    livePreview.srcdoc = html;
+    previewContainer.classList.remove('hidden');
+}
+
+function hidePreview() {
+    previewContainer.classList.add('hidden');
+    livePreview.srcdoc = '';
+}
+
+// Extract <script> content if embedded at the bottom
+function extractJS(code) {
+    const match = code.match(/<script[^>]*>([\s\S]*?)<\/script>/);
+    return match ? match[1] : '';
+}
+
 // UI State Management
 function setGenerating(generating) {
     isGenerating = generating;
@@ -166,11 +194,7 @@ function setGenerating(generating) {
     generateBtn.textContent = generating ? 'Generating...' : 'Generate Code';
     promptInput.disabled = generating;
 
-    if (generating) {
-        loadingIndicator.classList.remove('hidden');
-    } else {
-        loadingIndicator.classList.add('hidden');
-    }
+    loadingIndicator.classList.toggle('hidden', !generating);
 }
 
 function showError(message) {
@@ -201,15 +225,12 @@ function getErrorMessage(error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
         return 'Connection error. Please check if the server is running.';
     }
-
     if (error.message.includes('Rate limit exceeded')) {
         return 'Too many requests. Please wait a moment and try again.';
     }
-
     if (error.message.includes('API key')) {
         return 'API configuration error. Please check the server configuration.';
     }
-
     if (error.message.includes('quota')) {
         return 'API quota exceeded. Please check your OpenAI account billing.';
     }
