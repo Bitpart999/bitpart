@@ -2,68 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BITPART</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BITPART Easy Builder</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background-color: #0f172a;
+      color: #fff;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+    }
+    .section h3 {
+      margin-top: 0;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    button {
+      background-color: #0f172a;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e293b;
+    }
+    .generated-code {
+      white-space: pre-wrap;
+      background: #f1f5f9;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+  </style>
 </head>
 <body>
+  <header>BITPART Easy Builder</header>
   <div class="container">
-    <h1>BITPART</h1>
-
-    <!-- Toggle between prompt and easy builder -->
-    <div class="toggle-section">
-      <label>
-        <input type="radio" name="mode" value="prompt" checked> Prompt Mode
-      </label>
-      <label>
-        <input type="radio" name="mode" value="builder"> Easy Builder
-      </label>
-    </div>
-
-    <!-- Prompt input -->
-    <div id="promptMode">
-      <textarea id="promptInput" placeholder="Describe your website here..."></textarea>
-    </div>
-
-    <!-- Easy Builder mode -->
-    <div id="builderMode" class="hidden">
-      <h3>Choose your components</h3>
-
-      <label><input type="checkbox" id="includeHeader"> Include Header</label>
-      <div id="headerFields" class="hidden">
-        <input type="text" id="headerText" placeholder="Header Text">
+    <form id="builderForm">
+      <div class="section">
+        <h3>Header</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="includeHeader"> Include Header</label>
+          <input type="text" id="headerText" placeholder="Header Title" />
+        </div>
       </div>
 
-      <label><input type="checkbox" id="includeContact"> Include Contact Section</label>
-      <div id="contactFields" class="hidden">
-        <label><input type="checkbox" id="contactEmail"> Email</label>
-        <label><input type="checkbox" id="contactPhone"> Phone Number</label>
+      <div class="section">
+        <h3>Hero Section</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="includeHero"> Include Hero Section</label>
+          <input type="text" id="heroHeading" placeholder="Hero Heading" />
+          <textarea id="heroSubtext" placeholder="Hero Subtext"></textarea>
+        </div>
       </div>
-    </div>
 
-    <button id="generateBtn">Generate Code</button>
-    <button id="previewBtn">Preview</button>
-    <button id="copyBtn">Copy Code</button>
+      <div class="section">
+        <h3>Contact Section</h3>
+        <div class="form-group">
+          <label><input type="checkbox" id="includeContact"> Include Contact Section</label>
+          <label><input type="checkbox" id="includeEmail"> Include Email Field</label>
+          <label><input type="checkbox" id="includePhone"> Include Phone Number Field</label>
+        </div>
+      </div>
 
-    <div id="loadingIndicator" class="hidden">Generating...</div>
-    <div id="errorMessage" class="hidden error"></div>
+      <button type="submit">Generate HTML</button>
+    </form>
 
-    <div id="resultSection" class="hidden">
-      <h2>Generated Code</h2>
-      <pre id="codeOutput"></pre>
-      <div id="languageTag"></div>
-      <div id="responseTime"></div>
-      <p id="explanationText"></p>
-      <ul id="dependenciesList"></ul>
-      <p id="instructionsText"></p>
-    </div>
-
-    <div id="previewContainer" class="hidden">
-      <h2>Live Preview</h2>
-      <iframe id="livePreview"></iframe>
-    </div>
+    <div class="generated-code" id="generatedCode" style="display: none;"></div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById('builderForm');
+    const generatedCode = document.getElementById('generatedCode');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let html = '';
+
+      if (document.getElementById('includeHeader').checked) {
+        const headerText = document.getElementById('headerText').value;
+        html += `<header><h1>${headerText}</h1></header>\n`;
+      }
+
+      if (document.getElementById('includeHero').checked) {
+        const heroHeading = document.getElementById('heroHeading').value;
+        const heroSubtext = document.getElementById('heroSubtext').value;
+        html += `<section class='hero'>\n  <h2>${heroHeading}</h2>\n  <p>${heroSubtext}</p>\n</section>\n`;
+      }
+
+      if (document.getElementById('includeContact').checked) {
+        html += `<section class='contact'>\n  <h2>Contact Us</h2>\n  <form>`;
+        if (document.getElementById('includeEmail').checked) {
+          html += `\n    <input type='email' placeholder='Your Email' />`;
+        }
+        if (document.getElementById('includePhone').checked) {
+          html += `\n    <input type='tel' placeholder='Your Phone Number' />`;
+        }
+        html += `\n    <textarea placeholder='Your Message'></textarea>\n    <button type='submit'>Send</button>\n  </form>\n</section>\n`;
+      }
+
+      generatedCode.style.display = 'block';
+      generatedCode.textContent = html;
+    });
+  </script>
 </body>
 </html>
