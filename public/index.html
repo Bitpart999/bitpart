@@ -1,72 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitpart Code Generator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BITPART | Natural Language to Code</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Bitpart AI Code Generator</h1>
-            <p>Generate code from natural language descriptions</p>
-        </header>
+  <div class="container">
+    <h1 class="title">BITPART</h1>
+    <p class="subtitle">Convert plain English into HTML, CSS, and JS</p>
 
-        <main>
-            <div class="input-section">
-                <textarea 
-                    id="promptInput" 
-                    placeholder="Describe what you want to build... (e.g., 'Create a simple calculator with HTML, CSS, and JavaScript')"
-                    rows="4"
-                ></textarea>
-                <button id="generateBtn" class="generate-btn">Generate Code</button>
-            </div>
+    <textarea id="promptInput" class="input" placeholder="Describe what you want your code to do..."></textarea>
+    <button id="generateBtn" class="generate-btn">Generate Code</button>
+    <p id="loadingMsg" class="loading hidden">Generating code...</p>
+    <p id="errorMsg" class="error hidden"></p>
 
-            <div id="loadingIndicator" class="loading hidden">
-                <div class="spinner"></div>
-                <p>Generating code...</p>
-            </div>
-
-            <div id="errorMessage" class="error hidden"></div>
-
-            <div id="resultSection" class="result-section hidden">
-                <div class="result-header">
-                    <h2>Generated Code</h2>
-                    <button id="copyBtn" class="copy-btn">Copy Code</button>
-                </div>
-                
-                <div class="result-content">
-                    <div class="code-info">
-                        <span id="languageTag" class="language-tag"></span>
-                        <span id="responseTime" class="response-time"></span>
-                    </div>
-                    
-                    <pre id="codeOutput" class="code-output"></pre>
-                    
-                    <div class="explanation-section">
-                        <h3>Explanation</h3>
-                        <p id="explanationText"></p>
-                    </div>
-                    
-                    <div class="dependencies-section">
-                        <h3>Dependencies</h3>
-                        <ul id="dependenciesList"></ul>
-                    </div>
-                    
-                    <div class="instructions-section">
-                        <h3>Setup Instructions</h3>
-                        <p id="instructionsText"></p>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>Powered by OpenAI GPT-4o</p>
-        </footer>
+    <div id="resultSection" class="hidden">
+      <h2>Your Code:</h2>
+      <pre id="codeOutput" class="code-block"></pre>
+      <button id="copyBtn" class="copy-btn">Copy to Clipboard</button>
+      <button id="previewBtn" class="copy-btn">Preview Code</button>
     </div>
 
-    <script src="script.js"></script>
+    <div id="previewContainer" class="hidden" style="margin: 30px;">
+      <h3 style="margin-bottom: 10px;">Live Preview</h3>
+      <iframe id="previewFrame" style="width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 8px;"></iframe>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
