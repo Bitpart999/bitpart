@@ -18,6 +18,7 @@ const copyBtn = document.getElementById('copyBtn');
 const previewBtn = document.getElementById('previewBtn');
 const previewContainer = document.getElementById('previewContainer');
 const livePreview = document.getElementById('livePreview');
+const resetBtn = document.getElementById('resetBtn'); // NEW
 
 // State
 let isGenerating = false;
@@ -27,6 +28,7 @@ let lastGeneratedCode = '';
 generateBtn.addEventListener('click', generateCode);
 copyBtn.addEventListener('click', copyCode);
 previewBtn.addEventListener('click', showPreview);
+resetBtn.addEventListener('click', resetState); // NEW
 promptInput.addEventListener('keydown', handleKeyDown);
 
 // Initialize
@@ -67,7 +69,11 @@ async function generateCode() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 prompt: prompt,
-                options: { temperature: 0.7, maxTokens: 4000 }
+                previousCode: lastGeneratedCode, // chaining support
+                options: {
+                    temperature: 0.7,
+                    maxTokens: 4000
+                }
             })
         });
 
@@ -103,7 +109,7 @@ function displayResult(data, clientResponseTime) {
     codeOutput.textContent = lastGeneratedCode;
 
     languageTag.textContent = codeData.language || 'Unknown';
-    languageTag.className = `language-tag ${ (codeData.language || '').toLowerCase() }`;
+    languageTag.className = `language-tag ${(codeData.language || '').toLowerCase()}`;
 
     const serverTime = meta.responseTime || 0;
     responseTime.textContent = `Client: ${clientResponseTime}ms | Server: ${serverTime}ms`;
@@ -123,6 +129,33 @@ function displayResult(data, clientResponseTime) {
     instructionsText.textContent = codeData.instructions || 'No specific instructions provided';
 
     showResult();
+}
+
+// Show live preview
+function showPreview() {
+    if (!lastGeneratedCode) {
+        showError('No code available to preview');
+        return;
+    }
+
+    const html = `
+        <html>
+        <head><style>body { margin: 1rem; font-family: sans-serif; }</style></head>
+        <body>
+        ${lastGeneratedCode}
+        <script>${extractJS(lastGeneratedCode)}</script>
+        </body>
+        </html>
+    `;
+
+    livePreview.srcdoc = html;
+    previewContainer.classList.remove('hidden');
+}
+
+// Hide preview
+function hidePreview() {
+    previewContainer.classList.add('hidden');
+    livePreview.srcdoc = '';
 }
 
 // Copy code to clipboard
@@ -155,33 +188,22 @@ async function copyCode() {
     }
 }
 
-// Show live preview
-function showPreview() {
-    if (!lastGeneratedCode) {
-        showError('No code available to preview');
-        return;
-    }
-
-    const html = `
-        <html>
-        <head><style>body { margin: 1rem; font-family: sans-serif; }</style></head>
-        <body>
-        ${lastGeneratedCode}
-        <script>${extractJS(lastGeneratedCode)}</script>
-        </body>
-        </html>
-    `;
-
-    livePreview.srcdoc = html;
-    previewContainer.classList.remove('hidden');
+// Reset state (clears memory and UI)
+function resetState() {
+    lastGeneratedCode = '';
+    promptInput.value = '';
+    codeOutput.textContent = '';
+    explanationText.textContent = '';
+    dependenciesList.innerHTML = '';
+    instructionsText.textContent = '';
+    languageTag.textContent = '';
+    responseTime.textContent = '';
+    hidePreview();
+    hideResult();
+    hideError();
 }
 
-function hidePreview() {
-    previewContainer.classList.add('hidden');
-    livePreview.srcdoc = '';
-}
-
-// Extract <script> content if embedded at the bottom
+// Extract <script> content if embedded
 function extractJS(code) {
     const match = code.match(/<script[^>]*>([\s\S]*?)<\/script>/);
     return match ? match[1] : '';
@@ -193,7 +215,6 @@ function setGenerating(generating) {
     generateBtn.disabled = generating;
     generateBtn.textContent = generating ? 'Generating...' : 'Generate Code';
     promptInput.disabled = generating;
-
     loadingIndicator.classList.toggle('hidden', !generating);
 }
 
@@ -214,7 +235,7 @@ function hideResult() {
     resultSection.classList.add('hidden');
 }
 
-// Utility Functions
+// Utility
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
