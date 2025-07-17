@@ -389,3 +389,17 @@ footer {
 #promptInput:focus {
     outline: none;
 }
+
+.toggle-section {
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#builderMode input[type="text"] {
+  display: block;
+  margin: 0.5rem 0;
+}
+
