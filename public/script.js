@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL = window.location.origin;
-const API_ENDPOINT = ${API_BASE_URL}/api/compile;
+const API_ENDPOINT = `${API_BASE_URL}/api/compile`;
 
 // DOM Elements
 const promptInput = document.getElementById('promptInput');
