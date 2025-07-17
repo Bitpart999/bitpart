@@ -1,260 +1,206 @@
-// API Configuration
-const API_BASE_URL = window.location.origin;
-const API_ENDPOINT = `${API_BASE_URL}/api/compile`;
-
-// DOM Elements
 const promptInput = document.getElementById('promptInput');
 const generateBtn = document.getElementById('generateBtn');
-const loadingIndicator = document.getElementById('loadingIndicator');
-const errorMessage = document.getElementById('errorMessage');
-const resultSection = document.getElementById('resultSection');
+const previewBtn = document.getElementById('previewBtn');
+const copyBtn = document.getElementById('copyBtn');
 const codeOutput = document.getElementById('codeOutput');
 const languageTag = document.getElementById('languageTag');
-const responseTime = document.getElementById('responseTime');
 const explanationText = document.getElementById('explanationText');
 const dependenciesList = document.getElementById('dependenciesList');
 const instructionsText = document.getElementById('instructionsText');
-const copyBtn = document.getElementById('copyBtn');
-const previewBtn = document.getElementById('previewBtn');
+const resultSection = document.getElementById('resultSection');
 const previewContainer = document.getElementById('previewContainer');
 const livePreview = document.getElementById('livePreview');
-const resetBtn = document.getElementById('resetBtn'); // NEW
+const responseTime = document.getElementById('responseTime');
+const loadingIndicator = document.getElementById('loadingIndicator');
+const errorMessage = document.getElementById('errorMessage');
 
-// State
+const builderMode = document.getElementById('builderMode');
+const promptMode = document.getElementById('promptMode');
+const modeRadios = document.getElementsByName('mode');
+
+const includeHeader = document.getElementById('includeHeader');
+const headerFields = document.getElementById('headerFields');
+const headerText = document.getElementById('headerText');
+
+const includeContact = document.getElementById('includeContact');
+const contactFields = document.getElementById('contactFields');
+const contactEmail = document.getElementById('contactEmail');
+const contactPhone = document.getElementById('contactPhone');
+
+const API_ENDPOINT = 'https://bitpart-1.onrender.com/api/generate';
+
 let isGenerating = false;
 let lastGeneratedCode = '';
 
-// Event Listeners
+modeRadios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    if (mode === 'prompt') {
+      promptMode.classList.remove('hidden');
+      builderMode.classList.add('hidden');
+    } else {
+      promptMode.classList.add('hidden');
+      builderMode.classList.remove('hidden');
+    }
+  });
+});
+
+includeHeader.addEventListener('change', () => {
+  headerFields.classList.toggle('hidden', !includeHeader.checked);
+});
+
+includeContact.addEventListener('change', () => {
+  contactFields.classList.toggle('hidden', !includeContact.checked);
+});
+
 generateBtn.addEventListener('click', generateCode);
 copyBtn.addEventListener('click', copyCode);
 previewBtn.addEventListener('click', showPreview);
-resetBtn.addEventListener('click', resetState); // NEW
-promptInput.addEventListener('keydown', handleKeyDown);
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    promptInput.focus();
-    promptInput.title = 'Ctrl+Enter (or Cmd+Enter) to generate code';
-});
-
-// Handle Enter key in textarea (Ctrl+Enter or Cmd+Enter to generate)
-function handleKeyDown(event) {
-    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-        event.preventDefault();
-        generateCode();
-    }
-}
-
-// Main function to generate code
 async function generateCode() {
-    const prompt = promptInput.value.trim();
+  let prompt = '';
+  const currentMode = document.querySelector('input[name="mode"]:checked').value;
 
-    if (!prompt) {
-        showError('Please enter a description of what you want to build.');
-        return;
-    }
+  if (currentMode === 'prompt') {
+    prompt = promptInput.value.trim();
+  } else {
+    prompt = buildPromptFromBuilder();
+  }
 
-    if (isGenerating) return;
+  if (!prompt) {
+    showError('Please provide a prompt or select components.');
+    return;
+  }
 
-    try {
-        setGenerating(true);
-        hideError();
-        hideResult();
-        hidePreview();
+  if (isGenerating) return;
 
-        const startTime = Date.now();
-
-        const response = await fetch(API_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                prompt: prompt,
-                previousCode: lastGeneratedCode, // chaining support
-                options: {
-                    temperature: 0.7,
-                    maxTokens: 4000
-                }
-            })
-        });
-
-        const endTime = Date.now();
-        const clientResponseTime = endTime - startTime;
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Server error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.message || 'Failed to generate code');
-        }
-
-        displayResult(data, clientResponseTime);
-
-    } catch (error) {
-        console.error('Error generating code:', error);
-        showError(getErrorMessage(error));
-    } finally {
-        setGenerating(false);
-    }
-}
-
-// Display the generated code result
-function displayResult(data, clientResponseTime) {
-    const { data: codeData, meta } = data;
-
-    lastGeneratedCode = codeData.code || '';
-    codeOutput.textContent = lastGeneratedCode;
-
-    languageTag.textContent = codeData.language || 'Unknown';
-    languageTag.className = `language-tag ${(codeData.language || '').toLowerCase()}`;
-
-    const serverTime = meta.responseTime || 0;
-    responseTime.textContent = `Client: ${clientResponseTime}ms | Server: ${serverTime}ms`;
-
-    explanationText.textContent = codeData.explanation || 'No explanation provided';
-
-    const dependencies = codeData.dependencies || [];
-    if (dependencies.length > 0) {
-        dependenciesList.innerHTML = dependencies
-            .map(dep => `<li><code>${escapeHtml(dep)}</code></li>`)
-            .join('');
-        document.querySelector('.dependencies-section').style.display = 'block';
-    } else {
-        document.querySelector('.dependencies-section').style.display = 'none';
-    }
-
-    instructionsText.textContent = codeData.instructions || 'No specific instructions provided';
-
-    showResult();
-}
-
-// Show live preview
-function showPreview() {
-    if (!lastGeneratedCode) {
-        showError('No code available to preview');
-        return;
-    }
-
-    const html = `
-        <html>
-        <head><style>body { margin: 1rem; font-family: sans-serif; }</style></head>
-        <body>
-        ${lastGeneratedCode}
-        <script>${extractJS(lastGeneratedCode)}</script>
-        </body>
-        </html>
-    `;
-
-    livePreview.srcdoc = html;
-    previewContainer.classList.remove('hidden');
-}
-
-// Hide preview
-function hidePreview() {
-    previewContainer.classList.add('hidden');
-    livePreview.srcdoc = '';
-}
-
-// Copy code to clipboard
-async function copyCode() {
-    if (!lastGeneratedCode) {
-        showError('No code to copy');
-        return;
-    }
-
-    try {
-        await navigator.clipboard.writeText(lastGeneratedCode);
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = 'Copied!';
-        copyBtn.classList.add('copied');
-
-        setTimeout(() => {
-            copyBtn.textContent = originalText;
-            copyBtn.classList.remove('copied');
-        }, 2000);
-
-    } catch (error) {
-        console.error('Failed to copy code:', error);
-
-        const range = document.createRange();
-        range.selectNode(codeOutput);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-
-        showError('Please manually copy the selected code');
-    }
-}
-
-// Reset state (clears memory and UI)
-function resetState() {
-    lastGeneratedCode = '';
-    promptInput.value = '';
-    codeOutput.textContent = '';
-    explanationText.textContent = '';
-    dependenciesList.innerHTML = '';
-    instructionsText.textContent = '';
-    languageTag.textContent = '';
-    responseTime.textContent = '';
-    hidePreview();
-    hideResult();
+  try {
+    setGenerating(true);
     hideError();
+    hideResult();
+
+    const startTime = Date.now();
+
+    const response = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        previousCode: lastGeneratedCode,
+        options: {
+          temperature: 0.7,
+          maxTokens: 4000
+        }
+      })
+    });
+
+    const endTime = Date.now();
+    const clientResponseTime = endTime - startTime;
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to generate code');
+    }
+
+    displayResult(data, clientResponseTime);
+
+  } catch (error) {
+    console.error('Error generating code:', error);
+    showError(getErrorMessage(error));
+  } finally {
+    setGenerating(false);
+  }
 }
 
-// Extract <script> content if embedded
-function extractJS(code) {
-    const match = code.match(/<script[^>]*>([\s\S]*?)<\/script>/);
-    return match ? match[1] : '';
+function displayResult(data, responseTimeMs) {
+  lastGeneratedCode = data.code || '';
+  codeOutput.textContent = lastGeneratedCode;
+  languageTag.textContent = data.language || '';
+  explanationText.textContent = data.explanation || '';
+  instructionsText.textContent = data.instructions || '';
+  responseTime.textContent = `⏱️ Generated in ${responseTimeMs}ms`;
+
+  dependenciesList.innerHTML = '';
+  if (data.dependencies && data.dependencies.length > 0) {
+    data.dependencies.forEach(dep => {
+      const li = document.createElement('li');
+      li.textContent = dep;
+      dependenciesList.appendChild(li);
+    });
+  }
+
+  resultSection.classList.remove('hidden');
+  previewContainer.classList.remove('hidden');
+  showPreview();
 }
 
-// UI State Management
-function setGenerating(generating) {
-    isGenerating = generating;
-    generateBtn.disabled = generating;
-    generateBtn.textContent = generating ? 'Generating...' : 'Generate Code';
-    promptInput.disabled = generating;
-    loadingIndicator.classList.toggle('hidden', !generating);
+function copyCode() {
+  const code = codeOutput.textContent;
+  if (!code) return;
+
+  navigator.clipboard.writeText(code).then(() => {
+    alert('Code copied to clipboard!');
+  }).catch(err => {
+    console.error('Failed to copy code: ', err);
+  });
+}
+
+function showPreview() {
+  const html = lastGeneratedCode;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  livePreview.src = url;
 }
 
 function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.classList.remove('hidden');
+  errorMessage.textContent = message;
+  errorMessage.classList.remove('hidden');
 }
 
 function hideError() {
-    errorMessage.classList.add('hidden');
-}
-
-function showResult() {
-    resultSection.classList.remove('hidden');
+  errorMessage.textContent = '';
+  errorMessage.classList.add('hidden');
 }
 
 function hideResult() {
-    resultSection.classList.add('hidden');
+  resultSection.classList.add('hidden');
+  previewContainer.classList.add('hidden');
 }
 
-// Utility
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+function setGenerating(isLoading) {
+  isGenerating = isLoading;
+  loadingIndicator.classList.toggle('hidden', !isLoading);
+  generateBtn.disabled = isLoading;
 }
 
 function getErrorMessage(error) {
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        return 'Connection error. Please check if the server is running.';
-    }
-    if (error.message.includes('Rate limit exceeded')) {
-        return 'Too many requests. Please wait a moment and try again.';
-    }
-    if (error.message.includes('API key')) {
-        return 'API configuration error. Please check the server configuration.';
-    }
-    if (error.message.includes('quota')) {
-        return 'API quota exceeded. Please check your OpenAI account billing.';
-    }
+  if (error instanceof Error) return error.message;
+  return 'An unexpected error occurred.';
+}
 
-    return error.message || 'An unexpected error occurred. Please try again.';
+function buildPromptFromBuilder() {
+  let parts = [];
+
+  if (includeHeader.checked && headerText.value.trim()) {
+    parts.push(`Add a header that says "${headerText.value.trim()}"`);
+  }
+
+  if (includeContact.checked) {
+    let contactParts = [];
+    if (contactEmail.checked) contactParts.push("an email field");
+    if (contactPhone.checked) contactParts.push("a phone number");
+    if (contactParts.length > 0) {
+      parts.push("Include a contact section with " + contactParts.join(" and "));
+    }
+  }
+
+  return parts.join('. ') + '.';
 }
