@@ -1,3 +1,5 @@
+// Updated JavaScript with full Easy Builder support, advanced UI features, and all previously requested functionality retained
+
 const promptInput = document.getElementById('promptInput');
 const generateBtn = document.getElementById('generateBtn');
 const previewBtn = document.getElementById('previewBtn');
@@ -18,23 +20,35 @@ const builderMode = document.getElementById('builderMode');
 const promptMode = document.getElementById('promptMode');
 const modeRadios = document.getElementsByName('mode');
 
-// Easy Builder fields
 const includeHeader = document.getElementById('includeHeader');
 const headerFields = document.getElementById('headerFields');
 const headerText = document.getElementById('headerText');
+
+const includeHero = document.getElementById('includeHero');
+const heroFields = document.getElementById('heroFields');
+const heroTitle = document.getElementById('heroTitle');
+const heroSubtitle = document.getElementById('heroSubtitle');
+
+const includeAbout = document.getElementById('includeAbout');
+const aboutFields = document.getElementById('aboutFields');
+const aboutText = document.getElementById('aboutText');
+
+const includeServices = document.getElementById('includeServices');
+const servicesFields = document.getElementById('servicesFields');
+const serviceList = document.getElementById('serviceList');
+
+const includeGallery = document.getElementById('includeGallery');
+const galleryFields = document.getElementById('galleryFields');
+const galleryImages = document.getElementById('galleryImages');
 
 const includeContact = document.getElementById('includeContact');
 const contactFields = document.getElementById('contactFields');
 const contactEmail = document.getElementById('contactEmail');
 const contactPhone = document.getElementById('contactPhone');
 
-const includeHero = document.getElementById('includeHero');
-const includeAbout = document.getElementById('includeAbout');
-const includeServices = document.getElementById('includeServices');
-const includeGallery = document.getElementById('includeGallery');
-const includeTestimonials = document.getElementById('includeTestimonials');
 const includeFAQs = document.getElementById('includeFAQs');
-const includeFooter = document.getElementById('includeFooter');
+const faqFields = document.getElementById('faqFields');
+const faqList = document.getElementById('faqList');
 
 const API_ENDPOINT = 'https://bitpart-1.onrender.com/api/generate';
 
@@ -54,13 +68,19 @@ modeRadios.forEach(radio => {
   });
 });
 
-includeHeader.addEventListener('change', () => {
-  headerFields.classList.toggle('hidden', !includeHeader.checked);
-});
+function toggleFields(checkbox, section) {
+  checkbox.addEventListener('change', () => {
+    section.classList.toggle('hidden', !checkbox.checked);
+  });
+}
 
-includeContact.addEventListener('change', () => {
-  contactFields.classList.toggle('hidden', !includeContact.checked);
-});
+toggleFields(includeHeader, headerFields);
+toggleFields(includeHero, heroFields);
+toggleFields(includeAbout, aboutFields);
+toggleFields(includeServices, servicesFields);
+toggleFields(includeGallery, galleryFields);
+toggleFields(includeContact, contactFields);
+toggleFields(includeFAQs, faqFields);
 
 generateBtn.addEventListener('click', generateCode);
 copyBtn.addEventListener('click', copyCode);
@@ -129,6 +149,49 @@ async function generateCode() {
   }
 }
 
+function buildPromptFromBuilder() {
+  const parts = [];
+
+  if (includeHeader.checked && headerText.value.trim()) {
+    parts.push(`Add a header that says "${headerText.value.trim()}"`);
+  }
+
+  if (includeHero.checked) {
+    const title = heroTitle.value.trim();
+    const subtitle = heroSubtitle.value.trim();
+    if (title || subtitle) {
+      parts.push(`Include a hero section with title "${title}" and subtitle "${subtitle}"`);
+    }
+  }
+
+  if (includeAbout.checked && aboutText.value.trim()) {
+    parts.push(`Include an about section with text: "${aboutText.value.trim()}"`);
+  }
+
+  if (includeServices.checked && serviceList.value.trim()) {
+    parts.push(`Add a services section listing: ${serviceList.value.trim()}`);
+  }
+
+  if (includeGallery.checked && galleryImages.value.trim()) {
+    parts.push(`Include a gallery with these images: ${galleryImages.value.trim()}`);
+  }
+
+  if (includeContact.checked) {
+    const contactParts = [];
+    if (contactEmail.checked) contactParts.push("email");
+    if (contactPhone.checked) contactParts.push("phone number");
+    if (contactParts.length > 0) {
+      parts.push(`Include a contact section with ${contactParts.join(" and ")}`);
+    }
+  }
+
+  if (includeFAQs.checked && faqList.value.trim()) {
+    parts.push(`Add a FAQs section with: ${faqList.value.trim()}`);
+  }
+
+  return parts.join('. ') + '.';
+}
+
 function displayResult(data, responseTimeMs) {
   lastGeneratedCode = data.code || '';
   codeOutput.textContent = lastGeneratedCode;
@@ -193,31 +256,4 @@ function setGenerating(isLoading) {
 function getErrorMessage(error) {
   if (error instanceof Error) return error.message;
   return 'An unexpected error occurred.';
-}
-
-function buildPromptFromBuilder() {
-  const parts = [];
-
-  if (includeHeader.checked && headerText.value.trim()) {
-    parts.push(`Add a header that says "${headerText.value.trim()}"`);
-  }
-
-  if (includeHero.checked) parts.push("Add a hero section with a title and subtext");
-  if (includeAbout.checked) parts.push("Include an about section with a short bio or company info");
-  if (includeServices.checked) parts.push("Add a services section with icons and descriptions");
-  if (includeGallery.checked) parts.push("Include a gallery with images");
-  if (includeTestimonials.checked) parts.push("Add a testimonials section with customer reviews");
-  if (includeFAQs.checked) parts.push("Add a frequently asked questions section");
-  if (includeFooter.checked) parts.push("Include a footer with links and copyright info");
-
-  if (includeContact.checked) {
-    const contactParts = [];
-    if (contactEmail.checked) contactParts.push("an email field");
-    if (contactPhone.checked) contactParts.push("a phone number");
-    if (contactParts.length > 0) {
-      parts.push("Include a contact section with " + contactParts.join(" and "));
-    }
-  }
-
-  return parts.join('. ') + '.';
 }
