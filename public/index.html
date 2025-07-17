@@ -58,4 +58,50 @@
       <label><input type="checkbox" id="includeContact" /> Include Contact Info</label>
       <div id="contactFields" class="hidden">
         <label><input type="checkbox" id="contactEmail" /> Email</label>
-        <label><input type="checkbox" id=
+        <label><input type="checkbox" id="contactPhone" /> Phone</label>
+      </div>
+
+      <!-- FAQs Section -->
+      <label><input type="checkbox" id="includeFAQs" /> Include FAQs</label>
+      <div id="faqFields" class="hidden">
+        <textarea id="faqList" placeholder='Format: "Question1 - Answer1, Question2 - Answer2"' ></textarea>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="controls">
+      <button id="generateBtn">Generate Code</button>
+      <button id="previewBtn">Preview</button>
+      <button id="copyBtn">Copy Code</button>
+      <div id="loadingIndicator" class="hidden">Generating...</div>
+    </div>
+
+    <!-- Output -->
+    <div id="errorMessage" class="error hidden"></div>
+
+    <div id="resultSection" class="hidden">
+      <h2>Code Output <span id="languageTag"></span></h2>
+      <pre id="codeOutput"></pre>
+
+      <h3>Explanation</h3>
+      <p id="explanationText"></p>
+
+      <h3>Dependencies</h3>
+      <ul id="dependenciesList"></ul>
+
+      <h3>Instructions</h3>
+      <p id="instructionsText"></p>
+
+      <div id="responseTime"></div>
+    </div>
+
+    <!-- Live Preview -->
+    <div id="previewContainer" class="hidden">
+      <h2>Live Preview</h2>
+      <iframe id="livePreview"></iframe>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
