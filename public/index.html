@@ -3,103 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BITPART | Natural Language Website Builder</title>
+  <title>BITPART Easy Builder</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>BITPART Builder</h1>
+    <header class="top-bar">
+      <h1>BITPART Easy Builder</h1>
+      <p>Create a full-featured website with just a few clicks.</p>
+    </header>
 
-    <!-- Mode Selection -->
-    <div class="mode-select">
+    <section class="mode-toggle">
       <label><input type="radio" name="mode" value="prompt" checked /> Natural Prompt</label>
       <label><input type="radio" name="mode" value="builder" /> Easy Builder</label>
-    </div>
+    </section>
 
-    <!-- Prompt Mode -->
-    <div id="promptMode">
-      <textarea id="promptInput" placeholder="Describe the website you want..."></textarea>
-    </div>
+    <section id="promptMode">
+      <textarea id="promptInput" placeholder="Describe your website here..."></textarea>
+    </section>
 
-    <!-- Easy Builder Mode -->
-    <div id="builderMode" class="hidden">
-      <!-- Header Section -->
-      <label><input type="checkbox" id="includeHeader" /> Include Header</label>
-      <div id="headerFields" class="hidden">
-        <input type="text" id="headerText" placeholder="Header text (e.g., My Website)" />
+    <section id="builderMode" class="hidden builder-grid">
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeHeader" /> Header</label>
+        <div id="headerFields" class="field-group hidden">
+          <input type="text" id="headerText" placeholder="Header title" />
+        </div>
       </div>
 
-      <!-- Hero Section -->
-      <label><input type="checkbox" id="includeHero" /> Include Hero Section</label>
-      <div id="heroFields" class="hidden">
-        <input type="text" id="heroTitle" placeholder="Hero Title" />
-        <input type="text" id="heroSubtitle" placeholder="Hero Subtitle" />
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeHero" /> Hero Section</label>
+        <div id="heroFields" class="field-group hidden">
+          <input type="text" id="heroTitle" placeholder="Hero title" />
+          <input type="text" id="heroSubtitle" placeholder="Hero subtitle" />
+        </div>
       </div>
 
-      <!-- About Section -->
-      <label><input type="checkbox" id="includeAbout" /> Include About Section</label>
-      <div id="aboutFields" class="hidden">
-        <textarea id="aboutText" placeholder="About text"></textarea>
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeAbout" /> About Section</label>
+        <div id="aboutFields" class="field-group hidden">
+          <textarea id="aboutText" placeholder="About content..."></textarea>
+        </div>
       </div>
 
-      <!-- Services Section -->
-      <label><input type="checkbox" id="includeServices" /> Include Services</label>
-      <div id="servicesFields" class="hidden">
-        <textarea id="serviceList" placeholder="Service list (comma separated)"></textarea>
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeServices" /> Services</label>
+        <div id="servicesFields" class="field-group hidden">
+          <textarea id="serviceList" placeholder="Service 1, Service 2, ..."></textarea>
+        </div>
       </div>
 
-      <!-- Gallery Section -->
-      <label><input type="checkbox" id="includeGallery" /> Include Gallery</label>
-      <div id="galleryFields" class="hidden">
-        <textarea id="galleryImages" placeholder="Image URLs (comma separated)"></textarea>
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeGallery" /> Gallery</label>
+        <div id="galleryFields" class="field-group hidden">
+          <textarea id="galleryImages" placeholder="https://img1.jpg, https://img2.jpg..."></textarea>
+        </div>
       </div>
 
-      <!-- Contact Section -->
-      <label><input type="checkbox" id="includeContact" /> Include Contact Info</label>
-      <div id="contactFields" class="hidden">
-        <label><input type="checkbox" id="contactEmail" /> Email</label>
-        <label><input type="checkbox" id="contactPhone" /> Phone</label>
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeContact" /> Contact</label>
+        <div id="contactFields" class="field-group hidden">
+          <label><input type="checkbox" id="contactEmail" /> Email</label>
+          <label><input type="checkbox" id="contactPhone" /> Phone</label>
+        </div>
       </div>
 
-      <!-- FAQs Section -->
-      <label><input type="checkbox" id="includeFAQs" /> Include FAQs</label>
-      <div id="faqFields" class="hidden">
-        <textarea id="faqList" placeholder='Format: "Question1 - Answer1, Question2 - Answer2"' ></textarea>
+      <div class="builder-section">
+        <label><input type="checkbox" id="includeFAQs" /> FAQs</label>
+        <div id="faqFields" class="field-group hidden">
+          <textarea id="faqList" placeholder="Q1: A1, Q2: A2..."></textarea>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Actions -->
-    <div class="controls">
+    <div class="actions">
       <button id="generateBtn">Generate Code</button>
-      <button id="previewBtn">Preview</button>
+      <button id="previewBtn">Live Preview</button>
       <button id="copyBtn">Copy Code</button>
-      <div id="loadingIndicator" class="hidden">Generating...</div>
+      <div id="loadingIndicator" class="hidden">⏳ Generating...</div>
     </div>
 
-    <!-- Output -->
-    <div id="errorMessage" class="error hidden"></div>
+    <div id="errorMessage" class="error-message hidden"></div>
 
-    <div id="resultSection" class="hidden">
-      <h2>Code Output <span id="languageTag"></span></h2>
-      <pre id="codeOutput"></pre>
+    <section id="resultSection" class="hidden">
+      <div class="meta">
+        <span id="languageTag" class="badge"></span>
+        <span id="responseTime"></span>
+      </div>
+      <pre id="codeOutput" class="code-box"></pre>
 
-      <h3>Explanation</h3>
-      <p id="explanationText"></p>
+      <div class="info-box">
+        <h3>📜 Explanation</h3>
+        <p id="explanationText"></p>
+        <h3>⚙️ Instructions</h3>
+        <p id="instructionsText"></p>
+        <h3>📦 Dependencies</h3>
+        <ul id="dependenciesList"></ul>
+      </div>
+    </section>
 
-      <h3>Dependencies</h3>
-      <ul id="dependenciesList"></ul>
-
-      <h3>Instructions</h3>
-      <p id="instructionsText"></p>
-
-      <div id="responseTime"></div>
-    </div>
-
-    <!-- Live Preview -->
-    <div id="previewContainer" class="hidden">
-      <h2>Live Preview</h2>
-      <iframe id="livePreview"></iframe>
-    </div>
+    <section id="previewContainer" class="hidden">
+      <h2>🔍 Live Preview</h2>
+      <iframe id="livePreview" class="preview-frame"></iframe>
+    </section>
   </div>
 
   <script src="script.js"></script>
