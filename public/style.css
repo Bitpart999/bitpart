@@ -1,125 +1,94 @@
-/* Reset and Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
-  padding: 2rem;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 20px;
+  color: #333;
 }
 
-h1, h2 {
-  color: #0f172a;
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Container */
-#builderApp {
-  max-width: 900px;
-  margin: auto;
-  background: #ffffff;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
-/* Section styles */
-.section {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-.section label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-/* Checkbox toggle layout */
-.section input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #3b82f6;
-}
-
-.section .inputs {
-  margin-top: 1rem;
-  display: grid;
-  gap: 0.75rem;
-}
-
-/* Inputs */
-input[type="text"],
-input[type="email"],
-input[type="tel"] {
-  padding: 0.6rem 1rem;
+textarea, input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
-  background: #f1f5f9;
-  transition: border-color 0.2s ease;
+  resize: vertical;
 }
 
-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  background: #fff;
-}
-
-/* Buttons */
 button {
-  background: #3b82f6;
-  color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 10px 16px;
+  margin: 10px 5px 20px 0;
   font-size: 1rem;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
   cursor: pointer;
-  margin-top: 2rem;
   transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #2563eb;
+  background-color: #0056b3;
 }
 
-/* Preview iframe */
-#preview {
+.mode-select {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.hidden {
+  display: none;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#errorMessage {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+#resultSection {
+  margin-top: 30px;
+}
+
+#codeOutput {
+  background: #f4f4f4;
+  border-radius: 6px;
+  padding: 15px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+iframe#livePreview {
   width: 100%;
   height: 400px;
-  margin-top: 2rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.75rem;
-  background: white;
-}
-
-/* Responsive tweaks */
-@media (max-width: 600px) {
-  body {
-    padding: 1rem;
-  }
-
-  #builderApp {
-    padding: 1.25rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 20px;
 }
