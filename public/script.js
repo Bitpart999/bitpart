@@ -114,7 +114,8 @@ function displayResult(data, clientResponseTime) {
     
     // Display response time
     const serverTime = meta.responseTime || 0;
-    responseTime.textContent = Client: ${clientResponseTime}ms | Server: ${serverTime}ms;
+    responseTime.textContent = `Client: ${clientResponseTime}ms | Server: ${serverTime}ms`;
+
     
     // Display explanation
     explanationText.textContent = codeData.explanation || 'No explanation provided';
