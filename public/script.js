@@ -1,5 +1,3 @@
-// Updated JavaScript with full Easy Builder support, advanced UI features, and all previously requested functionality retained
-
 const promptInput = document.getElementById('promptInput');
 const generateBtn = document.getElementById('generateBtn');
 const previewBtn = document.getElementById('previewBtn');
@@ -68,12 +66,6 @@ modeRadios.forEach(radio => {
   });
 });
 
-function toggleFields(checkbox, section) {
-  checkbox.addEventListener('change', () => {
-    section.classList.toggle('hidden', !checkbox.checked);
-  });
-}
-
 toggleFields(includeHeader, headerFields);
 toggleFields(includeHero, heroFields);
 toggleFields(includeAbout, aboutFields);
@@ -85,6 +77,12 @@ toggleFields(includeFAQs, faqFields);
 generateBtn.addEventListener('click', generateCode);
 copyBtn.addEventListener('click', copyCode);
 previewBtn.addEventListener('click', showPreview);
+
+function toggleFields(checkbox, section) {
+  checkbox.addEventListener('change', () => {
+    section.classList.toggle('hidden', !checkbox.checked);
+  });
+}
 
 async function generateCode() {
   let prompt = '';
