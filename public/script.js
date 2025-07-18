@@ -48,7 +48,7 @@ const includeFAQs = document.getElementById('includeFAQs');
 const faqFields = document.getElementById('faqFields');
 const faqList = document.getElementById('faqList');
 
-const API_ENDPOINT = 'https://bitpart-1.onrender.com/api/generate';
+const API_ENDPOINT = '/api/generate';
 
 let isGenerating = false;
 let lastGeneratedCode = '';
