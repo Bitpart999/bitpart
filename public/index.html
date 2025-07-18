@@ -1,112 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BITPART Easy Builder</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitpart Code Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header class="top-bar">
-      <h1>BITPART</h1>
-      <p>Create a full-featured website with just a few clicks.</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Bitpart AI Code Generator</h1>
+            <p>Generate code from natural language descriptions</p>
+        </header>
 
-    <section class="mode-toggle">
-      <label><input type="radio" name="mode" value="prompt" checked /> Natural Prompt</label>
-      <label><input type="radio" name="mode" value="builder" /> Easy Builder</label>
-    </section>
+        <main>
+            <div class="input-section">
+                <textarea 
+                    id="promptInput" 
+                    placeholder="Describe what you want to build... (e.g., 'Create a simple calculator with HTML, CSS, and JavaScript')"
+                    rows="4"
+                ></textarea>
+                <button id="generateBtn" class="generate-btn">Generate Code</button>
+            </div>
 
-    <section id="promptMode">
-      <textarea id="promptInput" placeholder="Describe your website here..."></textarea>
-    </section>
+            <div id="loadingIndicator" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Generating code...</p>
+            </div>
 
-    <section id="builderMode" class="hidden builder-grid">
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeHeader" /> Header</label>
-        <div id="headerFields" class="field-group hidden">
-          <input type="text" id="headerText" placeholder="Header title" />
-        </div>
-      </div>
+            <div id="errorMessage" class="error hidden"></div>
 
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeHero" /> Hero Section</label>
-        <div id="heroFields" class="field-group hidden">
-          <input type="text" id="heroTitle" placeholder="Hero title" />
-          <input type="text" id="heroSubtitle" placeholder="Hero subtitle" />
-        </div>
-      </div>
+            <div id="resultSection" class="result-section hidden">
+                <div class="result-header">
+                    <h2>Generated Code</h2>
+                    <button id="copyBtn" class="copy-btn">Copy Code</button>
+                </div>
+                
+                <div class="result-content">
+                    <div class="code-info">
+                        <span id="languageTag" class="language-tag"></span>
+                        <span id="responseTime" class="response-time"></span>
+                    </div>
+                    
+                    <pre id="codeOutput" class="code-output"></pre>
+                    
+                    <div class="explanation-section">
+                        <h3>Explanation</h3>
+                        <p id="explanationText"></p>
+                    </div>
+                    
+                    <div class="dependencies-section">
+                        <h3>Dependencies</h3>
+                        <ul id="dependenciesList"></ul>
+                    </div>
+                    
+                    <div class="instructions-section">
+                        <h3>Setup Instructions</h3>
+                        <p id="instructionsText"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeAbout" /> About Section</label>
-        <div id="aboutFields" class="field-group hidden">
-          <textarea id="aboutText" placeholder="About content..."></textarea>
-        </div>
-      </div>
-
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeServices" /> Services</label>
-        <div id="servicesFields" class="field-group hidden">
-          <textarea id="serviceList" placeholder="Service 1, Service 2, ..."></textarea>
-        </div>
-      </div>
-
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeGallery" /> Gallery</label>
-        <div id="galleryFields" class="field-group hidden">
-          <textarea id="galleryImages" placeholder="https://img1.jpg, https://img2.jpg..."></textarea>
-        </div>
-      </div>
-
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeContact" /> Contact</label>
-        <div id="contactFields" class="field-group hidden">
-          <label><input type="checkbox" id="contactEmail" /> Email</label>
-          <label><input type="checkbox" id="contactPhone" /> Phone</label>
-        </div>
-      </div>
-
-      <div class="builder-section">
-        <label><input type="checkbox" id="includeFAQs" /> FAQs</label>
-        <div id="faqFields" class="field-group hidden">
-          <textarea id="faqList" placeholder="Q1: A1, Q2: A2..."></textarea>
-        </div>
-      </div>
-    </section>
-
-    <div class="actions">
-      <button id="generateBtn">Generate Code</button>
-      <button id="previewBtn">Live Preview</button>
-      <button id="copyBtn">Copy Code</button>
-      <div id="loadingIndicator" class="hidden">⏳ Generating...</div>
+        <footer>
+            <p>Powered by OpenAI GPT-4o</p>
+        </footer>
     </div>
 
-    <div id="errorMessage" class="error-message hidden"></div>
-
-    <section id="resultSection" class="hidden">
-      <div class="meta">
-        <span id="languageTag" class="badge"></span>
-        <span id="responseTime"></span>
-      </div>
-      <pre id="codeOutput" class="code-box"></pre>
-
-      <div class="info-box">
-        <h3>📜 Explanation</h3>
-        <p id="explanationText"></p>
-        <h3>⚙️ Instructions</h3>
-        <p id="instructionsText"></p>
-        <h3>📦 Dependencies</h3>
-        <ul id="dependenciesList"></ul>
-      </div>
-    </section>
-
-    <section id="previewContainer" class="hidden">
-      <h2>🔍 Live Preview</h2>
-      <iframe id="livePreview" class="preview-frame"></iframe>
-    </section>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
