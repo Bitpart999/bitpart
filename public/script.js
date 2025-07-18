@@ -109,7 +109,8 @@ function displayResult(data, clientResponseTime) {
     
     // Display language tag
     languageTag.textContent = codeData.language || 'Unknown';
-    languageTag.className = language-tag ${(codeData.language || '').toLowerCase()};
+    languageTag.className = `language-tag ${(codeData.language || '').toLowerCase()}`;
+
     
     // Display response time
     const serverTime = meta.responseTime || 0;
